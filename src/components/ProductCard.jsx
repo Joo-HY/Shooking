@@ -1,3 +1,5 @@
+import PurchaseFlow from "./PurchaseFlow";
+
 export default function ProductCard({ product, isInCart, onToggle }) {
   const { id, brand, description, price, imageUrl } = product;
 
@@ -17,7 +19,6 @@ export default function ProductCard({ product, isInCart, onToggle }) {
           {brand}
         </h3>
 
-        {/* 2줄 말줄임 (Tailwind v4에서도 안정적으로 동작) */}
         <p
           className="mb-2 text-[12px] text-neutral-500
           [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden"
@@ -30,18 +31,24 @@ export default function ProductCard({ product, isInCart, onToggle }) {
           {price.toLocaleString()}원
         </p>
 
-        <button
-          type="button"
-          onClick={() => onToggle(id)}
-          className={[
-            "rounded-full px-2.5 py-1.5 text-[12px] font-extrabold transition",
-            isInCart
-              ? "bg-neutral-200 text-neutral-900 hover:bg-neutral-300"
-              : "bg-black text-white hover:bg-neutral-800",
-          ].join(" ")}
-        >
-          {isInCart ? "담김" : "담기"}
-        </button>
+        {/* 버튼 영역: 담기 + 구매 */}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => onToggle(id)}
+            className={[
+              "rounded-full px-2.5 py-1.5 text-[12px] font-extrabold transition",
+              isInCart
+                ? "bg-neutral-200 text-neutral-900 hover:bg-neutral-300"
+                : "bg-black text-white hover:bg-neutral-800",
+            ].join(" ")}
+          >
+            {isInCart ? "담김" : "담기"}
+          </button>
+
+          {/* 구매 버튼(결제 플로우 진입) */}
+          <PurchaseFlow product={product} />
+        </div>
       </div>
     </article>
   );
