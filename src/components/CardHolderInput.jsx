@@ -7,7 +7,7 @@ export default function CardHolderInput({
   onFocus,
   className = "",
   disabled = false,
-  placeholder = "NAME (E.g. JUN)",
+  placeholder = "NAME (예 : HONGGILDONG",
   maxLength = 30,
 }) {
   const normalize = (s) => {
