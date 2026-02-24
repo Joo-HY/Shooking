@@ -86,10 +86,12 @@ export default function PaymentForm({ onSubmit }) {
           onChange={setCardNumber}
           onBlur={() => markTouched("cardNumber")}
           className={[
-            inputBaseClass,
+            // ✅ wrapper 회색 박스
+            "bg-neutral-100 border border-transparent focus-within:border-neutral-300",
+            // ✅ 시안처럼 둥글게/높이 유지 + 흰색 전환은 원하면 아래 한 줄 추가
+            // "focus-within:bg-white",
             touched.cardNumber && errors.cardNumber ? "border-red-400" : "",
           ].join(" ")}
-          placeholder="" // 시안처럼 placeholder 없이 회색 박스만
         />
         {touched.cardNumber && errors.cardNumber && (
           <p className="text-[12px] mt-1 text-red-600">{errors.cardNumber}</p>
