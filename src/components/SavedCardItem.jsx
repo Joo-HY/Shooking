@@ -14,7 +14,7 @@ export default function SavedCardItem({ card }) {
   const expiry = card.expiryMM && card.expiryYY ? `${card.expiryMM}/${card.expiryYY}` : "MM/YY";
 
   return (
-    <div className="w-full max-w-[320px] rounded-xl bg-[#2F2F2F] p-4 shadow">
+    <div className="w-full rounded-xl bg-[#2F2F2F] p-4 shadow">
       <div className="h-4 w-7 rounded bg-[#C9B458]" />
       <div className="mt-8 text-[14px] font-semibold tracking-[0.12em] text-white">
         {numberLine}
