@@ -1,6 +1,4 @@
-import PurchaseFlow from "./PurchaseFlow";
-
-export default function ProductCard({ product, isInCart, onToggle }) {
+export default function ProductCard({ product, isInCart, onToggle, onPurchase }) {
   const { id, brand, description, price, imageUrl } = product;
 
   return (
@@ -31,7 +29,7 @@ export default function ProductCard({ product, isInCart, onToggle }) {
           {price.toLocaleString()}원
         </p>
 
-        {/* 버튼 영역: 담기 + 구매 */}
+        {/* 담기 + 구매 */}
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -46,8 +44,13 @@ export default function ProductCard({ product, isInCart, onToggle }) {
             {isInCart ? "담김" : "담기"}
           </button>
 
-          {/* 구매 버튼(결제 플로우 진입) */}
-          <PurchaseFlow product={product} />
+          <button
+            type="button"
+            onClick={() => onPurchase(product)}
+            className="rounded-full bg-yellow-300 px-2.5 py-1.5 text-[12px] font-extrabold text-neutral-900 transition hover:bg-yellow-200"
+          >
+            구매
+          </button>
         </div>
       </div>
     </article>

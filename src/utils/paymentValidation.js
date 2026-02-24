@@ -25,8 +25,10 @@ export const validateExpiry = (raw) => {
 };
 
 export const validateHolder = (name) => {
-  if (!name || name.trim().length === 0) return "카드 소유자 이름은 필수입니다.";
-  if (name.trim().length < 2) return "이름은 최소 2자 이상 입력해주세요.";
+  const v = (name ?? "").trim();
+  if (v.length === 0) return "카드 소유자 이름은 필수입니다.";
+  if (v.length < 2) return "이름은 최소 2자 이상 입력해주세요.";
+  if (!/^[A-Z ]+$/.test(v)) return "사용자 이름은 영문(대문자)과 공백만 입력 가능합니다.";
   return "";
 };
 

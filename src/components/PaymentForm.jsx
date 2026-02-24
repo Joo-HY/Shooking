@@ -12,7 +12,13 @@ import {
   validateCvc,
 } from "../utils/paymentValidation";
 
+// 추가: 카드 저장소 연결
+import { useCards } from "../store/CardsContext.jsx";
+
 export default function PaymentForm({ onSubmit }) {
+  // 추가
+  const { addCard } = useCards();
+
   const [cardNumber, setCardNumber] = useState(""); // raw 16 digits
   const [expiry, setExpiry] = useState("");         // raw "MMYY"
   const [holder, setHolder] = useState("");
@@ -25,12 +31,15 @@ export default function PaymentForm({ onSubmit }) {
     cvc: false,
   });
 
-  const errors = useMemo(() => ({
-    cardNumber: validateCardNumber(cardNumber),
-    expiry: validateExpiry(expiry),
-    holder: validateHolder(holder),
-    cvc: validateCvc(cvc),
-  }), [cardNumber, expiry, holder, cvc]);
+  const errors = useMemo(
+    () => ({
+      cardNumber: validateCardNumber(cardNumber),
+      expiry: validateExpiry(expiry),
+      holder: validateHolder(holder),
+      cvc: validateCvc(cvc),
+    }),
+    [cardNumber, expiry, holder, cvc]
+  );
 
   const isFormValid = useMemo(
     () => Object.values(errors).every((e) => e === ""),
@@ -51,7 +60,23 @@ export default function PaymentForm({ onSubmit }) {
       cvc,
     };
 
+    // ✅ 카드 등록(저장): CVC는 절대 저장하지 않음
+    addCard({
+      cardNumberRaw: payload.cardNumber,
+      expiryMM: payload.expiryMM,
+      expiryYY: payload.expiryYY,
+      holder: payload.holder,
+    });
+
+    // 화면 전환(예: list로) 등에 사용
     onSubmit?.(payload);
+
+    // (선택) 폼 초기화 원하면 아래 주석 해제
+    // setCardNumber("");
+    // setExpiry("");
+    // setHolder("");
+    // setCvc("");
+    // setTouched({ cardNumber: false, expiry: false, holder: false, cvc: false });
   };
 
   return (

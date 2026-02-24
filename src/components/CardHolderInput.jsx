@@ -1,48 +1,35 @@
 import React from "react";
-import { onlyDigits } from "../utils/input";
 
-export default function ExpiryInput({
+export default function CardHolderInput({
   value,
   onChange,
   onBlur,
   onFocus,
   className = "",
   disabled = false,
-  placeholder = "MM/YY",
+  placeholder = "NAME (E.g. JUN)",
+  maxLength = 30,
 }) {
-  const format = (raw) => {
-    const mm = raw.slice(0, 2);
-    const yy = raw.slice(2, 4);
-    if (raw.length <= 2) return mm;
-    return `${mm}/${yy}`;
-  };
-
-  const clampMonth = (digits) => {
-    if (digits.length < 2) return digits;
-    let mm = parseInt(digits.slice(0, 2), 10);
-    if (Number.isNaN(mm)) return digits;
-    if (mm === 0) mm = 1;
-    if (mm > 12) mm = 12;
-    return String(mm).padStart(2, "0") + digits.slice(2);
-  };
-
-  const handleChange = (e) => {
-    let raw = onlyDigits(e.target.value).slice(0, 4); // MMYY
-    raw = clampMonth(raw);
-    onChange(raw);
+  const normalize = (s) => {
+    // 영문/공백만 허용
+    const filtered = s.replace(/[^a-zA-Z\s]/g, "");
+    // 공백 정리
+    const collapsed = filtered.replace(/\s+/g, " ").trim();
+    // 카드 관행: 대문자
+    return collapsed.toUpperCase().slice(0, maxLength);
   };
 
   return (
     <input
       type="text"
-      inputMode="numeric"
       placeholder={placeholder}
-      value={format(value)}
-      onChange={handleChange}
+      value={value}
+      onChange={(e) => onChange(normalize(e.target.value))}
       onBlur={onBlur}
       onFocus={onFocus}
       disabled={disabled}
       className={`border p-2 rounded w-full ${className}`}
+      autoComplete="off"
     />
   );
 }
