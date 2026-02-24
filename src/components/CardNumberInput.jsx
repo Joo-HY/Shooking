@@ -59,7 +59,7 @@ export default function CardNumberInput({
       <div
         className={[
           "pointer-events-none absolute inset-0 flex items-center px-3",
-          "text-[14px] font-medium",
+          "text-base font-medium",
           isEmpty ? "text-neutral-400" : "text-neutral-900",
         ].join(" ")}
       >
