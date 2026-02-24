@@ -81,7 +81,7 @@ export default function CardNumberInput({
         aria-label="카드 번호"
         className={[
           "w-full bg-transparent px-3 py-2",
-          "text-transparent caret-neutral-900",
+          "text-base text-transparent caret-neutral-900",
           "outline-none",
         ].join(" ")}
       />
