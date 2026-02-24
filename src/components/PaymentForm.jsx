@@ -4,6 +4,7 @@ import CardNumberInput from "./CardNumberInput";
 import ExpiryInput from "./ExpiryInput";
 import CardHolderInput from "./CardHolderInput";
 import CvcInput from "./CvcInput";
+import CardPreview from "./CardPreview"; // 추가
 
 import {
   validateCardNumber,
@@ -12,11 +13,9 @@ import {
   validateCvc,
 } from "../utils/paymentValidation";
 
-// 추가: 카드 저장소 연결
 import { useCards } from "../store/CardsContext.jsx";
 
 export default function PaymentForm({ onSubmit }) {
-  // 추가
   const { addCard } = useCards();
 
   const [cardNumber, setCardNumber] = useState(""); // raw 16 digits
@@ -48,6 +47,9 @@ export default function PaymentForm({ onSubmit }) {
 
   const markTouched = (key) => setTouched((t) => ({ ...t, [key]: true }));
 
+  const inputBaseClass =
+    "bg-neutral-100 border border-transparent focus:border-neutral-300 focus:bg-white";
+
   const handleSubmit = () => {
     setTouched({ cardNumber: true, expiry: true, holder: true, cvc: true });
     if (!isFormValid) return;
@@ -60,7 +62,6 @@ export default function PaymentForm({ onSubmit }) {
       cvc,
     };
 
-    // ✅ 카드 등록(저장): CVC는 절대 저장하지 않음
     addCard({
       cardNumberRaw: payload.cardNumber,
       expiryMM: payload.expiryMM,
@@ -68,84 +69,115 @@ export default function PaymentForm({ onSubmit }) {
       holder: payload.holder,
     });
 
-    // 화면 전환(예: list로) 등에 사용
     onSubmit?.(payload);
-
-    // (선택) 폼 초기화 원하면 아래 주석 해제
-    // setCardNumber("");
-    // setExpiry("");
-    // setHolder("");
-    // setCvc("");
-    // setTouched({ cardNumber: false, expiry: false, holder: false, cvc: false });
   };
 
   return (
     <div className="space-y-4">
+      {/* 시안: 카드 이미지 프리뷰 */}
+      <CardPreview cardNumberRaw={cardNumber} holder={holder} expiryRaw={expiry} />
+
       <div>
-        <label className="block text-sm mb-1">카드 번호</label>
+        <label className="block text-[12px] font-semibold text-neutral-700 mb-1">
+          카드 번호
+        </label>
         <CardNumberInput
           value={cardNumber}
           onChange={setCardNumber}
           onBlur={() => markTouched("cardNumber")}
-          className={touched.cardNumber && errors.cardNumber ? "border-red-500" : ""}
+          className={[
+            inputBaseClass,
+            touched.cardNumber && errors.cardNumber ? "border-red-400" : "",
+          ].join(" ")}
+          placeholder="" // 시안처럼 placeholder 없이 회색 박스만
         />
         {touched.cardNumber && errors.cardNumber && (
-          <p className="text-sm mt-1 text-red-600">{errors.cardNumber}</p>
+          <p className="text-[12px] mt-1 text-red-600">{errors.cardNumber}</p>
         )}
-        <p className="text-xs mt-1 text-gray-500">
-          카드번호 마지막 8자리는 화면에 노출되지 않도록 마스킹 처리됩니다.
-        </p>
       </div>
 
       <div>
-        <label className="block text-sm mb-1">만료일</label>
+        <label className="block text-[12px] font-semibold text-neutral-700 mb-1">
+          만료일
+        </label>
         <ExpiryInput
           value={expiry}
           onChange={setExpiry}
           onBlur={() => markTouched("expiry")}
-          className={touched.expiry && errors.expiry ? "border-red-500" : ""}
+          className={[
+            inputBaseClass,
+            "w-[120px]", // 시안처럼 짧게
+            touched.expiry && errors.expiry ? "border-red-400" : "",
+          ].join(" ")}
+          placeholder="MM / YY"
         />
         {touched.expiry && errors.expiry && (
-          <p className="text-sm mt-1 text-red-600">{errors.expiry}</p>
+          <p className="text-[12px] mt-1 text-red-600">{errors.expiry}</p>
         )}
       </div>
 
       <div>
-        <label className="block text-sm mb-1">카드 소유자 이름</label>
+        <div className="mb-1 flex items-center justify-between">
+          <label className="block text-[12px] font-semibold text-neutral-700">
+            카드 소유자이름
+          </label>
+          <span className="text-[11px] text-neutral-400">
+            {Math.min(holder.length, 30)}/30
+          </span>
+        </div>
+
         <CardHolderInput
           value={holder}
           onChange={setHolder}
           onBlur={() => markTouched("holder")}
-          className={touched.holder && errors.holder ? "border-red-500" : ""}
+          className={[
+            inputBaseClass,
+            touched.holder && errors.holder ? "border-red-400" : "",
+          ].join(" ")}
+          placeholder="카드에 표기된 이름과 동일하게 입력하세요."
+          maxLength={30}
         />
         {touched.holder && errors.holder && (
-          <p className="text-sm mt-1 text-red-600">{errors.holder}</p>
+          <p className="text-[12px] mt-1 text-red-600">{errors.holder}</p>
         )}
       </div>
 
       <div>
-        <label className="block text-sm mb-1">CVC</label>
+        <div className="mb-1 flex items-center gap-2">
+          <label className="block text-[12px] font-semibold text-neutral-700">
+            보안 코드(CVC/CVV)
+          </label>
+
+          {/* 시안의 ? 아이콘 느낌 */}
+          <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-neutral-300 text-[12px] text-neutral-500">
+            ?
+          </span>
+        </div>
+
         <CvcInput
           value={cvc}
           onChange={setCvc}
           onBlur={() => markTouched("cvc")}
-          className={touched.cvc && errors.cvc ? "border-red-500" : ""}
+          className={[
+            inputBaseClass,
+            "w-[120px]", // 시안처럼 짧게
+            touched.cvc && errors.cvc ? "border-red-400" : "",
+          ].join(" ")}
+          placeholder=""
         />
         {touched.cvc && errors.cvc && (
-          <p className="text-sm mt-1 text-red-600">{errors.cvc}</p>
+          <p className="text-[12px] mt-1 text-red-600">{errors.cvc}</p>
         )}
-        <p className="text-xs mt-1 text-gray-500">
-          CVC는 입력 시 마스킹 처리되며 화면 어디에도 표시되지 않습니다.
-        </p>
       </div>
 
       <button
         type="button"
         onClick={handleSubmit}
         disabled={!isFormValid}
-        className={`w-full rounded-lg py-3 ${
-          isFormValid ? "bg-black text-white" : "bg-gray-200 text-gray-500"
-        }`}
+        className={[
+          "w-full rounded-full py-3 text-[13px] font-extrabold transition",
+          isFormValid ? "bg-black text-white" : "bg-neutral-200 text-neutral-500",
+        ].join(" ")}
       >
         작성 완료
       </button>
