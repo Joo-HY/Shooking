@@ -56,4 +56,10 @@ export default defineConfig([
       },
     },
   },
+  {
+  files: ['src/store/**/*.{js,jsx}'],
+  rules: {
+    'react-refresh/only-export-components': 'off',
+  },
+},
 ])
