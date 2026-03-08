@@ -13,7 +13,7 @@ export default function PaymentModule({ items = [], totalPrice = 0, onClose }) {
     });
 
     alert("결제가 완료되었습니다(모의).");
-    onClose?.();
+    onPaymentSuccess?.();
   };
 
   return (
