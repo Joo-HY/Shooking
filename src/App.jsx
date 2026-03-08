@@ -1,16 +1,17 @@
 import { useMemo, useState } from "react";
 import TopBar from "./components/TopBar.jsx";
 import ProductCard from "./components/ProductCard.jsx";
-import PaymentModule from "./components/PaymentModule.jsx"; // 추가
+import PaymentModule from "./components/PaymentModule.jsx";
+import CartPage from "./components/CartPage.jsx";
 import { products } from "./data/products.js";
 import { CardsProvider } from "./store/CardsContext.jsx";
 
 export default function App() {
   const [cartIds, setCartIds] = useState(() => new Set());
 
-  // 결제 모듈 진입 상태
-  const [paymentOpen, setPaymentOpen] = useState(false);
-  const [payingProduct, setPayingProduct] = useState(null);
+  const [screen, setScreen] = useState("products");
+  const [paymentItems, setPaymentItems] = useState([]);
+  const [paymentTotal, setPaymentTotal] = useState(0);
 
   function toggleCart(productId) {
     setCartIds((prev) => {
@@ -23,23 +24,38 @@ export default function App() {
 
   const isInCart = useMemo(() => (id) => cartIds.has(id), [cartIds]);
 
+  const cartProducts = useMemo(() => {
+    return products.filter((p) => cartIds.has(p.id));
+  }, [cartIds]);
+
   const handlePurchaseStart = (product) => {
-    setPayingProduct(product);
-    setPaymentOpen(true);
+    setPaymentItems([{ ...product, quantity: 1 }]);
+    setPaymentTotal(product.price);
+    setScreen("payment");
+  };
+
+  const handleCartCheckout = ({ items, finalTotal }) => {
+    setPaymentItems(items);
+    setPaymentTotal(finalTotal);
+    setScreen("payment");
   };
 
   const handlePaymentClose = () => {
-    setPaymentOpen(false);
-    setPayingProduct(null);
+    setPaymentItems([]);
+    setPaymentTotal(0);
+    setScreen("products");
   };
 
   return (
     <CardsProvider>
       <div className="min-h-screen bg-white">
-        <TopBar cartCount={cartIds.size} />
+        <TopBar
+          cartCount={cartIds.size}
+          onCartClick={() => setScreen("cart")}
+        />
 
         <main className="mx-auto max-w-[420px] px-4 py-4">
-          {!paymentOpen ? (
+          {screen === "products" && (
             <>
               <h1 className="mb-1.5 text-[24px] font-extrabold tracking-[-0.2px] text-neutral-900">
                 신발 상품 목록
@@ -55,13 +71,27 @@ export default function App() {
                     product={p}
                     isInCart={isInCart(p.id)}
                     onToggle={toggleCart}
-                    onPurchase={handlePurchaseStart} // 추가
+                    onPurchase={handlePurchaseStart}
                   />
                 ))}
               </section>
             </>
-          ) : (
-            <PaymentModule product={payingProduct} onClose={handlePaymentClose} />
+          )}
+
+          {screen === "cart" && (
+            <CartPage
+              items={cartProducts}
+              onBack={() => setScreen("products")}
+              onCheckout={handleCartCheckout}
+            />
+          )}
+
+          {screen === "payment" && (
+            <PaymentModule
+              items={paymentItems}
+              totalPrice={paymentTotal}
+              onClose={handlePaymentClose}
+            />
           )}
         </main>
       </div>

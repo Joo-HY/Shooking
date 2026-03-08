@@ -1,10 +1,11 @@
-export default function TopBar({ cartCount }) {
+export default function TopBar({ cartCount, onCartClick }) {
   return (
     <header className="sticky top-0 z-10 h-[54px] bg-black">
       <div className="mx-auto flex h-full max-w-[420px] items-center justify-end px-4">
         <button
           type="button"
           aria-label="장바구니"
+          onClick={onCartClick}
           className="relative grid h-9 w-9 place-items-center rounded-xl text-white"
         >
           <svg

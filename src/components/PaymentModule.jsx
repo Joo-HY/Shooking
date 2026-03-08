@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import PaymentForm from "./PaymentForm.jsx";
 import CardListView from "./CardListView.jsx";
 
-export default function PaymentModule({ product, onClose }) {
-  const [mode, setMode] = useState("list"); // "list" | "add"
+export default function PaymentModule({ items = [], totalPrice = 0, onClose }) {
+  const [mode, setMode] = useState("list");
 
   const handlePay = (card) => {
-    // 모의 결제
     console.log("MOCK PAY", {
-      productId: product?.id,
-      price: product?.price,
+      items,
+      totalPrice,
       cardToken: card.token,
     });
+
     alert("결제가 완료되었습니다(모의).");
     onClose?.();
   };
@@ -23,10 +23,10 @@ export default function PaymentModule({ product, onClose }) {
           onClose={onClose}
           onAddCard={() => setMode("add")}
           onPay={handlePay}
+          totalPrice={totalPrice}
         />
       ) : (
         <div className="w-full">
-          {/* 상단: 뒤로 + 닫기 */}
           <div className="mb-4 flex items-center justify-between">
             <button
               type="button"
@@ -52,7 +52,6 @@ export default function PaymentModule({ product, onClose }) {
 
           <PaymentForm
             onSubmit={() => {
-              // 작성 완료 후 목록 화면으로
               setMode("list");
             }}
           />
