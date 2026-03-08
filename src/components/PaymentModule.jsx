@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import PaymentForm from "./PaymentForm.jsx";
 import CardListView from "./CardListView.jsx";
 
-export default function PaymentModule({ items = [], totalPrice = 0, onClose }) {
+export default function PaymentModule({
+  items = [],
+  totalPrice = 0,
+  onClose,
+  onPaymentSuccess,
+}) {
   const [mode, setMode] = useState("list");
 
   const handlePay = (card) => {
@@ -13,6 +18,7 @@ export default function PaymentModule({ items = [], totalPrice = 0, onClose }) {
     });
 
     alert("결제가 완료되었습니다(모의).");
+
     onPaymentSuccess?.();
   };
 
@@ -23,7 +29,6 @@ export default function PaymentModule({ items = [], totalPrice = 0, onClose }) {
           onClose={onClose}
           onAddCard={() => setMode("add")}
           onPay={handlePay}
-          totalPrice={totalPrice}
         />
       ) : (
         <div className="w-full">
