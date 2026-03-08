@@ -43,41 +43,52 @@ export default function CartPage({
         <>
           <section className="space-y-4">
             {items.map((item) => (
-              <article key={item.id} className="flex gap-4 border-b pb-4">
-
+              <article key={item.id} className="flex gap-4 border-b border-neutral-200 pb-4">
                 <img
-                  src={item.image}
-                  alt={item.name}
-                  className="h-[100px] w-[100px] rounded-[20px] object-cover"
+                  src={item.imageUrl}
+                  alt={item.brand}
+                  className="h-[100px] w-[100px] rounded-[20px] object-cover bg-neutral-100"
+                  onError={(e) => {
+                    e.currentTarget.src = "https://via.placeholder.com/100x100?text=No+Image";
+                  }}
                 />
 
                 <div className="flex flex-1 flex-col justify-center">
-
-                  <p className="text-[15px]">{item.brand}</p>
-
-                  <p className="text-[16px] font-extrabold">
+                  <p className="text-[15px] text-neutral-700">{item.brand}</p>
+                  <p className="text-[16px] font-extrabold text-neutral-900">
                     {formatPrice(item.price)}
                   </p>
 
                   <div className="mt-2 flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => onDecrease(item.id)}
+                      className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-200 text-[18px] text-neutral-700"
+                    >
+                      −
+                    </button>
 
-                    <button onClick={() => onDecrease(item.id)}>−</button>
-
-                    <span>{item.quantity}</span>
-
-                    <button onClick={() => onIncrease(item.id)}>+</button>
+                    <span className="min-w-[12px] text-center text-[14px] text-neutral-800">
+                      {item.quantity}
+                    </span>
+            
+                    <button
+                      type="button"
+                      onClick={() => onIncrease(item.id)}
+                      className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-200 text-[18px] text-neutral-700"
+                    >
+                      +
+                    </button>
 
                     <button
+                      type="button"
                       onClick={() => onRemove(item.id)}
-                      className="ml-2 text-[12px]"
+                      className="ml-2 text-[12px] font-bold text-neutral-400"
                     >
                       삭제
                     </button>
-
                   </div>
-
                 </div>
-
               </article>
             ))}
           </section>
